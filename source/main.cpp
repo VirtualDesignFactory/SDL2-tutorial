@@ -169,7 +169,7 @@ bool init()
 bool loadMedia()
 {
     // Load default surface
-    gKeyPressSurface[DEFAULT] = SDL_LoadBMP("images/hello_world.bmp");
+    gKeyPressSurface[DEFAULT] = SDL_LoadBMP("images/default.bmp");
 
     if (gKeyPressSurface[DEFAULT] == NULL)
     {
