@@ -52,16 +52,31 @@ int main(int argc, char* args[])
         return -1;
     }
 
+    // Main loop flag
+    bool quit = false;
 
-    // Apply the image
-    SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
+    // Event handler
+    SDL_Event e;
 
-    // Update the surface
-    SDL_UpdateWindowSurface(gWindow);
+    // While the application is running
+    while (!quit)
+    {
+        // Handle events on the queue
+        while (SDL_PollEvent(&e) != 0)
+        {
+            // User requests quit
+            if (e.type == SDL_QUIT)
+            {
+                quit = true;
+            }
+        }
 
-    // Wait two seconds
-    SDL_Delay(2000);
+        // Apply the image
+        SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
 
+        // Update the surface
+        SDL_UpdateWindowSurface(gWindow);
+    }
 
     // Free resources and close SDL
     close();
