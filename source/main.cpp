@@ -4,8 +4,8 @@
 #include <string>
 
 // Screen dimensions
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 900; // 640
+const int SCREEN_HEIGHT = 600; // 480
 
 
 // Key press surface constants
@@ -119,8 +119,13 @@ int main(int argc, char* args[])
             }
         }
 
-        // Apply the image
-        SDL_BlitSurface(gCurrentSurface, NULL, gScreenSurface, NULL);
+        // Apply the stretched image
+        SDL_Rect stretchedRect;
+        stretchedRect.x = 0;
+        stretchedRect.y = 0;
+        stretchedRect.w = SCREEN_WIDTH;
+        stretchedRect.h = SCREEN_HEIGHT;
+        SDL_BlitScaled(gCurrentSurface, NULL, gScreenSurface, &stretchedRect);
 
         // Update the surface
         SDL_UpdateWindowSurface(gWindow);
@@ -169,7 +174,7 @@ bool init()
 bool loadMedia()
 {
     // Load default surface
-    gKeyPressSurface[DEFAULT] = SDL_LoadBMP("images/default.bmp");
+    gKeyPressSurface[DEFAULT] = loadSurface("images/default.bmp");
 
     if (gKeyPressSurface[DEFAULT] == NULL)
     {
@@ -178,7 +183,7 @@ bool loadMedia()
     }
 
     // Load up surface
-    gKeyPressSurface[UP] = SDL_LoadBMP("images/up.bmp");
+    gKeyPressSurface[UP] = loadSurface("images/up.bmp");
 
     if (gKeyPressSurface[UP] == NULL)
     {
@@ -187,7 +192,7 @@ bool loadMedia()
     }
 
     // Load down surface
-    gKeyPressSurface[DOWN] = SDL_LoadBMP("images/down.bmp");
+    gKeyPressSurface[DOWN] = loadSurface("images/down.bmp");
 
     if (gKeyPressSurface[DOWN] == NULL)
     {
@@ -196,7 +201,7 @@ bool loadMedia()
     }
 
     // Load left surface
-    gKeyPressSurface[LEFT] = SDL_LoadBMP("images/left.bmp");
+    gKeyPressSurface[LEFT] = loadSurface("images/left.bmp");
 
     if (gKeyPressSurface[LEFT] == NULL)
     {
@@ -205,7 +210,7 @@ bool loadMedia()
     }
 
     // Load right surface
-    gKeyPressSurface[RIGHT] = SDL_LoadBMP("images/right.bmp");
+    gKeyPressSurface[RIGHT] = loadSurface("images/right.bmp");
 
     if (gKeyPressSurface[RIGHT] == NULL)
     {
@@ -233,6 +238,9 @@ void close()
 
 SDL_Surface* loadSurface(std::string path)
 {
+    // Initialise the surface to null in case of any errors
+    SDL_Surface* optimizedSurface = NULL;
+
     // Load image at specified path
     SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
 
@@ -240,6 +248,19 @@ SDL_Surface* loadSurface(std::string path)
     {
         printf("Unable to load image %s! SDL_Error: %s/n", path.c_str(), SDL_GetError());
     }
+    else
+    {
+        // Convert surface to screen format
+        optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, NULL);
 
-    return loadedSurface;
+        if (optimizedSurface == NULL)
+        {
+            printf("Unable to optimse image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+        }
+
+        // Get rid of the old loaded surface
+        SDL_FreeSurface(loadedSurface);
+    }
+
+    return optimizedSurface;
 }
