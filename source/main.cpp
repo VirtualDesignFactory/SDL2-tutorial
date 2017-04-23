@@ -1,5 +1,6 @@
 // Using SDL and standard IO
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
 
@@ -162,6 +163,14 @@ bool init()
     if (gWindow == NULL)
     {
         printf("Window could not be created! SDL_Error: %s/n", SDL_GetError());
+        return false;
+    }
+
+    // Initialize PNG loading
+    int imgFlags = INT_INIT_PNG;
+    if(!(IMG_Init(imgFlags) & imgFlags))
+    {
+        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
         return false;
     }
 
