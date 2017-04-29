@@ -47,9 +47,6 @@ SDL_Renderer* gRenderer = NULL;
 // Current displayed texture
 SDL_Texture* gTexture= NULL;
 
-// The images that correspond to a keypress
-SDL_Texture* gKeyPressSurface[TOTAL];
-
 
 //// Start of Main function
 
@@ -77,9 +74,6 @@ int main(int argc, char* args[])
     // Event handler
     SDL_Event e;
 
-    // Set the default current surface
-    gTexture = gKeyPressSurface[DEFAULT];
-
     // While the application is running
     while (!quit)
     {
@@ -91,39 +85,32 @@ int main(int argc, char* args[])
             {
                 quit = true;
             }
-
-            if (e.type == SDL_KEYDOWN)
-            {
-                // Select surfaces based on the key press
-                switch (e.key.keysym.sym)
-                {
-                    case SDLK_UP:
-                    gTexture = gKeyPressSurface[UP];
-                    break;
-
-                    case SDLK_DOWN:
-                    gTexture = gKeyPressSurface[DOWN];
-                    break;
-
-                    case SDLK_LEFT:
-                    gTexture = gKeyPressSurface[LEFT];
-                    break;
-
-                    case SDLK_RIGHT:
-                    gTexture = gKeyPressSurface[RIGHT];
-                    break;
-
-                    default:
-                    gTexture = gKeyPressSurface[DEFAULT];
-                }
-            }
         }
 
         // Clear the screen
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 30, 255);
         SDL_RenderClear(gRenderer);
 
-        // Render the texture to the screen
-        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+        // Render red filled quad
+        SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+        SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
+        SDL_RenderFillRect(gRenderer, &fillRect);
+
+        // Render green outlined quad
+        SDL_Rect outlineRect = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3 };
+        SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+        SDL_RenderDrawRect(gRenderer, &outlineRect);
+
+        // Draw blue horizontal line
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
+        SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+
+        // Draw vertical line of yellow dots
+        SDL_SetRenderDrawColor(gRenderer, 255, 255, 0, 255);
+        for (int i = 0; i < SCREEN_HEIGHT; i += 4)
+        {
+            SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, i);
+        }
 
         // Update the screen
         SDL_RenderPresent(gRenderer);
@@ -172,9 +159,6 @@ bool init()
         return false;
     }
 
-    // Initialize renderer color
-    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
     // Initialize PNG loading
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags))
@@ -189,51 +173,6 @@ bool init()
 
 bool loadMedia()
 {
-    // Load default surface
-    gKeyPressSurface[DEFAULT] = loadTexture("images/default.png");
-
-    if (gKeyPressSurface[DEFAULT] == NULL)
-    {
-        printf("Unable to load default image!");
-        return false;
-    }
-
-    // Load up surface
-    gKeyPressSurface[UP] = loadTexture("images/up.png");
-
-    if (gKeyPressSurface[UP] == NULL)
-    {
-        printf("Unable to load up image!");
-        return false;
-    }
-
-    // Load down surface
-    gKeyPressSurface[DOWN] = loadTexture("images/down.png");
-
-    if (gKeyPressSurface[DOWN] == NULL)
-    {
-        printf("Unable to load down image!");
-        return false;
-    }
-
-    // Load left surface
-    gKeyPressSurface[LEFT] = loadTexture("images/left.png");
-
-    if (gKeyPressSurface[LEFT] == NULL)
-    {
-        printf("Unable to load left image!");
-        return false;
-    }
-
-    // Load right surface
-    gKeyPressSurface[RIGHT] = loadTexture("images/right.png");
-
-    if (gKeyPressSurface[RIGHT] == NULL)
-    {
-        printf("Unable to load right image!");
-        return false;
-    }
-
     return true;
 }
 
@@ -253,33 +192,4 @@ void close()
     // Quit SDL Subsystems
     IMG_Quit();
     SDL_Quit();
-}
-
-
-SDL_Texture* loadTexture(std::string path)
-{
-    // The final texture
-    SDL_Texture* newTexture = NULL;
-
-    // Load the image at the specified path
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-
-    if (loadedSurface == NULL)
-    {
-        printf("Unable to load image %s! SDL_Image Error: %s/n", path.c_str(), IMG_GetError());
-        return newTexture;
-    }
-
-    // Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-
-    if (newTexture == NULL)
-    {
-        printf("Unable to create tesxture from %s! SDL_Error: %s/n", path.c_str(), SDL_GetError());
-    }
-
-    // Get rid of the old loaded surface
-    SDL_FreeSurface(loadedSurface);
-
-    return newTexture;
 }
