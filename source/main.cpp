@@ -26,7 +26,7 @@ public:
     void free();
 
     // Renderes texture at given point
-    void render(int x, int y);
+    void render(int x, int y, SDL_Rect* clip = NULL);
 
     // Gets image dimensions
     int getWidth();
@@ -63,8 +63,8 @@ SDL_Window*  gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 // Scene textures
-Texture gMeTexture;
-Texture gBackgroundTexture;
+SDL_Rect gSpriteClips[4];
+Texture gSpriteSheetTexture;
 
 //// Class methods
 
@@ -135,11 +135,20 @@ void Texture::free()
     }
 }
 
-void Texture::render(int x, int y)
+void Texture::render(int x, int y, SDL_Rect* clip)
 {
     // Set rendering space and render to screen
     SDL_Rect renderQuad = { x, y, _width, _height };
-    SDL_RenderCopy(gRenderer, _texture, NULL, &renderQuad);
+
+    // Set clip rendering dimensions
+    if (clip != NULL)
+    {
+        renderQuad.w = clip->w;
+        renderQuad.h = clip->h;
+    }
+
+    // Render to the screen
+    SDL_RenderCopy(gRenderer, _texture, clip, &renderQuad);
 }
 
 int Texture::getWidth()
@@ -195,11 +204,19 @@ int main(int argc, char* args[])
         SDL_SetRenderDrawColor(gRenderer, 30, 0, 30, 255);
         SDL_RenderClear(gRenderer);
 
-        // Render the 'Background' texture to the screen
-        gBackgroundTexture.render(0, 0);
 
-        // Render the 'me' texture to the screen
-        gMeTexture.render(240, 190);
+        // Render the top left sprite
+        gSpriteSheetTexture.render(0, 0, &gSpriteClips[0]);
+
+        // Render the top right sprite
+        gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[1].w, 0, &gSpriteClips[1]);
+
+        // Render the bottom left sprite
+        gSpriteSheetTexture.render(0, SCREEN_HEIGHT - gSpriteClips[2].h, &gSpriteClips[2]);
+
+        // Render the bottom right sprite
+        gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[3].w, SCREEN_HEIGHT - gSpriteClips[3].h, &gSpriteClips[3]);
+
 
         // Update the screen
         SDL_RenderPresent(gRenderer);
@@ -263,18 +280,17 @@ bool init()
 bool loadMedia()
 {
     // Load 'me' texture
-    if (!gMeTexture.loadFromFile("images/me.png"))
+    if (!gSpriteSheetTexture.loadFromFile("images/sprites.png"))
     {
-        printf("Failed to load 'Me' texture image!\n");
+        printf("Failed to load sprite sheet texture image!\n");
         return false;
     }
 
-    // Load 'background' texture
-    if (!gBackgroundTexture.loadFromFile("images/background.png"))
-    {
-        printf("Failed to load 'Background' texture image!\n");
-        return false;
-    }
+    // Set sprite clips (x, y, w, h)
+    gSpriteClips[0] = { 0,     0, 100, 100 };
+    gSpriteClips[1] = { 100,   0, 100, 100 };
+    gSpriteClips[2] = { 0,   100, 100, 100 };
+    gSpriteClips[3] = { 100, 100, 100, 100 };
 
     return true;
 }
@@ -283,8 +299,7 @@ bool loadMedia()
 void close()
 {
     // Free loaded images
-    gMeTexture.free();
-    gBackgroundTexture.free();
+    gSpriteSheetTexture.free();
 
     // Destroy window
     SDL_DestroyRenderer(gRenderer);
