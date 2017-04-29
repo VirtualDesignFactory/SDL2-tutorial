@@ -5,8 +5,8 @@
 #include <string>
 
 // Screen dimensions
-const int SCREEN_WIDTH  = 640; // 640
-const int SCREEN_HEIGHT = 480; // 480
+const int SCREEN_WIDTH  = 900; // 640
+const int SCREEN_HEIGHT = 600; // 480
 
 
 // Key press surface constants
@@ -88,29 +88,79 @@ int main(int argc, char* args[])
         }
 
         // Clear the screen
-        SDL_SetRenderDrawColor(gRenderer, 0, 0, 30, 255);
+        SDL_SetRenderDrawColor(gRenderer, 30, 0, 30, 255);
         SDL_RenderClear(gRenderer);
 
+
+
+        // // Render green outlined quad
+        // SDL_Rect outlineRect = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3 };
+        // SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+        // SDL_RenderDrawRect(gRenderer, &outlineRect);
+
+        // // Draw blue horizontal line
+        // SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
+        // SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+
+        // // Draw vertical line of yellow dots
+        // SDL_SetRenderDrawColor(gRenderer, 255, 255, 0, 255);
+        // for (int i = 0; i < SCREEN_HEIGHT; i += 4)
+        // {
+        //     SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, i);
+        // }
+
+        //// Top left viewport (x, y, w, h)
+        SDL_Rect topLeftViewport = { 0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+        SDL_RenderSetViewport(gRenderer, &topLeftViewport);
+        
+        // Render viewport outline
+        SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
+        SDL_Rect TLVOutline = { 0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+        SDL_RenderDrawRect(gRenderer, &TLVOutline);
+
         // Render red filled quad
-        SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+        SDL_Rect fillRect = { 20, 20, 280, 200 };
         SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
         SDL_RenderFillRect(gRenderer, &fillRect);
 
-        // Render green outlined quad
-        SDL_Rect outlineRect = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3 };
+        // Render white filled quad
+        SDL_Rect wFillRect = { 50, 50, 50, 50 };
+        SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(gRenderer, &wFillRect);
+
+
+        //// Top right viewport (x, y, w, h)
+        SDL_Rect topRightViewport = { SCREEN_WIDTH / 2, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+        SDL_RenderSetViewport(gRenderer, &topRightViewport);
+
+        // Render viewport outline
         SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
-        SDL_RenderDrawRect(gRenderer, &outlineRect);
+        SDL_Rect TRVOutline = { 0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+        SDL_RenderDrawRect(gRenderer, &TRVOutline);
 
-        // Draw blue horizontal line
-        SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
-        SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-
-        // Draw vertical line of yellow dots
+        // Render some lines
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 0, 255);
-        for (int i = 0; i < SCREEN_HEIGHT; i += 4)
-        {
-            SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, i);
-        }
+        SDL_RenderDrawLine(gRenderer, 50, 50, 270, 50);
+
+        SDL_SetRenderDrawColor(gRenderer, 200, 255, 50, 255);
+        SDL_RenderDrawLine(gRenderer, 50, 220, 270, 10);
+
+
+        //// Bottom viewport (x, y, w, h)
+        SDL_Rect bottomViewport = { 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+        SDL_RenderSetViewport(gRenderer, &bottomViewport);
+
+        // Render viewport outline
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
+        SDL_Rect BVOutline = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+        SDL_RenderDrawRect(gRenderer, &BVOutline);
+
+        // Render some lines
+        SDL_SetRenderDrawColor(gRenderer, 255, 255, 0, 255);
+        SDL_RenderDrawLine(gRenderer, 50, 50, 270, 50);
+
+        SDL_SetRenderDrawColor(gRenderer, 200, 255, 50, 255);
+        SDL_RenderDrawLine(gRenderer, 50, 220, 270, 10);
 
         // Update the screen
         SDL_RenderPresent(gRenderer);
