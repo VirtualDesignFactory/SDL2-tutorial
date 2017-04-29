@@ -95,7 +95,7 @@ bool Texture::loadFromFile(std::string path)
 
     if (loadedSurface == NULL)
     {
-        printf("Unable to load the image %s! SDL_Image Error: %s/n", path.c_str(), IMG_GetError());
+        printf("Unable to load the image %s! SDL_Image Error: %s\n", path.c_str(), IMG_GetError());
         return false;
     }
 
@@ -107,7 +107,7 @@ bool Texture::loadFromFile(std::string path)
 
     if (newTexture == NULL)
     {
-        printf("Unable to create texture from %s! SDL Error: %s/n", path.c_str(), SDL_GetError());
+        printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
         return false;
     }
 
@@ -219,7 +219,7 @@ bool init()
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        printf("SDL could not be initialized! SDL_Error: %s/n", SDL_GetError());
+        printf("SDL could not be initialized! SDL_Error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -235,7 +235,7 @@ bool init()
 
     if (gWindow == NULL)
     {
-        printf("Window could not be created! SDL_Error: %s/n", SDL_GetError());
+        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -244,7 +244,7 @@ bool init()
 
     if (gRenderer == NULL)
     {
-        printf("Renderer could not be created! SDL Error: %s/n", SDL_GetError());
+        printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -265,14 +265,14 @@ bool loadMedia()
     // Load 'me' texture
     if (!gMeTexture.loadFromFile("images/me.png"))
     {
-        printf("Failed to load 'Me' texture image!/n");
+        printf("Failed to load 'Me' texture image!\n");
         return false;
     }
 
     // Load 'background' texture
     if (!gBackgroundTexture.loadFromFile("images/background.png"))
     {
-        printf("Failed to load 'Background' texture image!/n");
+        printf("Failed to load 'Background' texture image!\n");
         return false;
     }
 
